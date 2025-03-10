@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Milk Price Data Extraction</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Milk Price Data Extraction</h1>
+    <button id="recordButton">Record Voice</button>
+    <a href="{{ url_for('select_month') }}">
+        <button>Go to Month Selection</button>
+    </a>
+    
+    <p id="status"></p>
+    <div id="result"></div>
+
+    <script>
+        // Check for browser support for SpeechRecognition
+        var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            document.getElementById("status").innerText = "Your browser does not support Speech Recognition.";
+        } else {
+            var recognition = new SpeechRecognition();
+            // Set language to Indian English to better capture Hinglish (adjust if needed)
+            recognition.lang = 'en-IN';
+
+            recognition.onstart = function() {
+                document.getElementById("status").innerText = "Voice recognition started. Please speak...";
+            };
+
+            recognition.onspeechend = function() {
+                recognition.stop();
+                document.getElementById("status").innerText = "Voice recognition ended.";
+            };
+
+            recognition.onresult = function(event) {
+                // Capture the transcript of the voice input
+                var transcript = event.results[0][0].transcript;
+                document.getElementById("status").innerText = "You said: " + transcript;
+                
+                // Send the transcript to the Flask backend for processing
+                fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: transcript })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var resultHtml = "<h3>Extracted Data</h3>";
+                    resultHtml += "<p><strong>Date:</strong> " + (data.date || "Not found") + "</p>";
+                    resultHtml += "<p><strong>Shift:</strong> " + (data.shift || "Not found") + "</p>";
+                    resultHtml += "<p><strong>Milk Price:</strong> " + (data.price || "Not found") + "</p>";
+                    document.getElementById("result").innerHTML = resultHtml;
+                })
+                .catch(error => {
+                    document.getElementById("result").innerText = "Error processing data.";
+                    console.error('Error:', error);
+                });
+            };
+
+            // Start voice recognition when the button is clicked
+            document.getElementById("recordButton").addEventListener("click", function(){
+                recognition.start();
+            });
+        }
+    </script>
+</body>
+</html>

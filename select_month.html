@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Month</title>
+</head>
+<body>
+    <h2>Select a Month</h2>
+    <form method="POST">
+        <label for="month">Month:</label>
+        <input type="month" id="month" name="month" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if selected_month %}
+        <h3>Data for: {{ selected_month }}</h3>
+        <h4>Total Value: {{ total }}</h4>
+
+        <table border="1">
+            <tr>
+                <th>Date</th>
+                <th>Shift</th>
+                <th>Amount</th>
+            </tr>
+            {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+</html>
