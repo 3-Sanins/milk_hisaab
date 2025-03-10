@@ -88,8 +88,8 @@ def extract_data(text):
         amount = amount_pattern.group(1)
 
     if date and shift and amount:
-        cn=mysql.connect(host='localhost',user
-='root',password="admin",database='hisab2')
+        cn=mysql.connect(host='sql12.freesqldatabase.com',user
+='sql12766824',password="E9lkXwvMvj",database='sql12766824')
         cr=cn.cursor()
         cr.execute("create table if not exists money(date date,shift varchar(10),amount float(5,2));")
         cn.commit()
@@ -110,9 +110,11 @@ def select_month():
         selected_month = request.form['month']
         if len(selected_month) == 1:
             selected_month = "0" + selected_month
-        cn=mysql.connect(host='localhost',user
-='root',password="admin",database='hisab2')
+        cn=mysql.connect(host='sql12.freesqldatabase.com',user
+='sql12766824',password="E9lkXwvMvj",database='sql12766824')
         cr=cn.cursor()
+        cr.execute("create table if not exists money(date date,shift varchar(10),amount float(5,2));")
+        cn.commit()
         cr.execute("select * from money where date like '{}';".format("%"+selected_month+'-__'))
         data_table=list(cr.fetchall())
         cr.execute("select sum(amount) from money where date like '{}';".format("%"+selected_month+'%'))
