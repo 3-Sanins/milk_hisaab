@@ -5,9 +5,6 @@ import pymysql as mysql
 
 app = Flask(__name__)
 
-import re
-from word2number import w2n
-
 def convert_hindi_words_to_numbers(text):
     """
     Converts Hindi number words (like "chaubees") to digits (like "24").
@@ -88,12 +85,17 @@ def extract_data(text):
         amount = amount_pattern.group(1)
 
     if date and shift and amount:
-        cn=mysql.connect(host='sql12.freesqldatabase.com',user
-='sql12766824',password="E9lkXwvMvj",database='sql12766824')
+        cn=mysql.connect(host='z5w7r.h.filess.io',user
+='hisab_disappear',password="bba1a0cad643309ee99d0e37e5c3030c38ef4fcf",database='hisab_disappear')
         cr=cn.cursor()
         cr.execute("create table if not exists money(date date,shift varchar(10),amount float(5,2));")
         cn.commit()
-        cr.execute("insert into money values(%s,%s,%s);",(date,shift,amount))
+        cr.execute("select * from money where date='{}' and shift='{}';".format(date,shift))
+        r=cr.fetchall()
+        if r:
+            cr.execute("update money set amount={} where date='{}' and shift='{}';".format(amount,date,shift))
+        else:
+            cr.execute("insert into money values(%s,%s,%s);",(date,shift,amount))
         cn.commit()
         cn.close()
         
@@ -110,8 +112,8 @@ def select_month():
         selected_month = request.form['month']
         if len(selected_month) == 1:
             selected_month = "0" + selected_month
-        cn=mysql.connect(host='sql12.freesqldatabase.com',user
-='sql12766824',password="E9lkXwvMvj",database='sql12766824')
+        cn=mysql.connect(host='z5w7r.h.filess.io',user
+='hisab_disappear',password="bba1a0cad643309ee99d0e37e5c3030c38ef4fcf",database='hisab_disappear')
         cr=cn.cursor()
         cr.execute("create table if not exists money(date date,shift varchar(10),amount float(5,2));")
         cn.commit()
